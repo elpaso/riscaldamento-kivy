@@ -1,0 +1,295 @@
+<MyBigButton@Button>:
+    font_size: 50
+    markup: True
+    size_hint_y: None
+    height: 80
+    #background_color: [255, 0, 0, 1]
+
+<MyBigBackButton@Button>:
+    font_size: 50
+    markup: True
+    size_hint_y: None
+    height: 100
+    #background_color: [255, 0, 0, 1]
+    Image:
+        source: 'data/left-arrow.png'
+        y: self.parent.y
+        x: self.parent.x
+
+<MyBigRoomButton@Button>:
+    font_size: 50
+    markup: True
+
+<MyBigLabel@Label>:
+    font_size: 50
+    markup: True
+    size_hint_y: None
+
+<MySmallLabel@Label>:
+    font_size: 40
+    markup: True
+    halign: 'left'
+    padding_x:10
+
+
+ScreenManager:
+    MenuScreen:
+    RoomScreen:
+    RoomConfigScreen:
+    WeeklyProgramsScreen:
+    WeeklyProgramDetailsScreen:
+    SettingsScreen:
+    RoomChangeProgramScreen:
+    TimeSlotsScreen:
+    TimeSlotSettingsScreen:
+
+<MenuScreen>:
+    name: 'menu_screen'
+    pump_open: pump_open
+    hot_temp: hot_temp
+    cold_temp: cold_temp
+    time: time
+    BoxLayout:
+        orientation: "vertical"
+        MyBigLabel:
+            id: time
+        MyBigLabel:
+            id: pump_open
+        MyBigLabel:
+            id: hot_temp
+        MyBigLabel:
+            id: cold_temp
+        Label:
+            id: spacer
+        MyBigButton:
+            text: 'Sincronizza orologio'
+            on_press: app.clock_sync()
+        Label:
+            id: spacer
+        MyBigButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'settings_screen'
+                app.root.transition.direction = 'left'
+        Label:
+            id: spacer
+        MyBigButton:
+            text: 'Stanze'
+            on_press:
+                app.root.current = 'room_screen'
+                app.root.transition.direction = 'left'
+
+<RoomScreen>:
+    name: 'room_screen'
+    room_buttons: room_buttons
+    BoxLayout:
+        orientation: "vertical"
+        BoxLayout:
+            #spacing: 10
+            orientation: "vertical"
+            id: room_buttons
+        MyBigBackButton:
+            text: 'Home'
+            on_press:
+                app.root.current = 'menu_screen'
+                app.root.transition.direction = 'right'
+
+<RoomChangeProgramScreen>:
+    name: 'room_change_program_screen'
+    room_program_select: room_program_select
+    BoxLayout:
+        orientation: "vertical"
+        id: room_program_select
+        BoxLayout:
+            orientation: "vertical"
+            id: room_program_select
+        MyBigBackButton:
+            text: 'Annulla'
+            on_press:
+                app.root.transition.direction = 'right'
+                app.root.current = 'room_screen'
+
+
+<RoomConfigScreen>:
+    name: 'room_config_screen'
+    room_status: room_status
+    on_enter: app.update_room_screen()
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        BoxLayout:
+            #spacing: 10
+            orientation: "vertical"
+            id: room_status
+            room_name: room_name
+            room_program: room_program
+            room_temps: room_temps
+            room_program: room_program
+            MyBigLabel:
+                id: room_name
+            MySmallLabel:
+                id: room_temps
+            MySmallLabel:
+                text_size: self.width, None
+                id: room_program
+                halign: 'center'
+            Label:
+                id: spacer
+            MyBigRoomButton:
+                text: 'Cambia programma'
+                on_press: app.root.current = 'room_change_program_screen'
+
+        MyBigBackButton:
+            text: 'Stanze'
+            on_press:
+                app.root.current = 'room_screen'
+                app.root.transition.direction = 'right'
+
+<SettingsScreen>:
+    name: 'settings_screen'
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+        BoxLayout:
+            #spacing: 10
+            orientation: "vertical"
+
+        MyBigButton:
+            text: 'Programmi settimanali'
+            on_press:
+                app.root.current = 'weekly_programs_screen'
+                app.root.transition.direction = 'left'
+
+        Label:
+            id: spacer
+
+        MyBigButton:
+            text: 'Fasce orarie'
+            on_press:
+                app.root.current = 'time_slots_screen'
+                app.root.transition.direction = 'left'
+
+        Label:
+            id: spacer
+
+        MyBigBackButton:
+            text: 'Home'
+            on_press:
+                app.root.current = 'menu_screen'
+                app.root.transition.direction = 'right'
+
+<WeeklyProgramsScreen>:
+    name: 'weekly_programs_screen'
+    weekly_programs_buttons: weekly_programs_buttons
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+        BoxLayout:
+            #spacing: 10
+            orientation: "vertical"
+            id: weekly_programs_buttons
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'settings_screen'
+                app.root.transition.direction = 'right'
+
+<WeeklyProgramDetailsScreen>:
+    name: 'weekly_program_details_screen'
+    on_enter: app.update_program_details_screen()
+    weekly_program_details_name: weekly_program_details_name
+    weekly_program_details_buttons: weekly_program_details_buttons
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+        MyBigLabel:
+            id: weekly_program_details_name
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            #spacing: 10
+
+            orientation: "vertical"
+            id: weekly_program_details_buttons
+
+        MyBigBackButton:
+            text: 'Programmi settimanali'
+            on_press:
+                app.root.current = 'weekly_programs_screen'
+                app.root.transition.direction = 'right'
+
+<TimeSlotsScreen>
+    name: 'time_slots_screen'
+    time_slots_buttons: time_slots_buttons
+    on_enter: app.update_time_slots_screen()
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            text: "Fasce orarie"
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            #spacing: 10
+
+            orientation: "vertical"
+            id: time_slots_buttons
+
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'settings_screen'
+                app.root.transition.direction = 'right'
+
+<TimeSlotSettingsScreen>
+    name: 'time_slots_settings_screen'
+    slider: slider
+    time_slots_settings_label: time_slots_settings_label
+    on_enter: app.update_time_slots_settings_screen()
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            id: time_slots_settings_label
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        Slider:
+            id: slider
+            min: 0
+            max: 14.4
+            step: 0.01
+            orientation: 'horizontal'
+
+        Label:
+            font_size: 30
+            text: str(app.represent_slot(slider.value))
+
+        MyBigBackButton:
+            text: 'Salva'
+            on_press:
+                app.change_slot_value()
+                app.root.current = 'time_slots_screen'
+                app.root.transition.direction = 'right'
+
+        MyBigBackButton:
+            text: 'Fasce orarie'
+            on_press:
+                app.root.current = 'time_slots_screen'
+                app.root.transition.direction = 'right'
