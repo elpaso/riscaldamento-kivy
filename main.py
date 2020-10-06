@@ -23,8 +23,7 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle, Line
 
-kivy.require('1.1.1')
-
+kivy.require('1.11.1')
 
 
 ip = '192.168.99.123'
@@ -53,7 +52,7 @@ CMD_UNBLOCK = 14
 #define ERR_WRONG_PARM 4 // Generic parameter error
 
 # Example response of c=s or /st
-# {"P":0,"u":1515687267,"s":4,"b":0,"c":45.89,"h":50.78,"E":0,"R":[{"t":15.50,"T":5.0,"p":6,"d":5,"s":"C"},{"t":15.37,"T":5.0,"p":0,"d":0,"s":"C"},{"t":15.25,"T":5.0,"p":0,"d":0,"s":"C"},{"t":19.75,"T":19.0,"p":5,"d":4,"s":"C"},{"t":16.6,"T":5.0,"p":0,"d":0,"s":"C"}]}
+ST_RESULT = {"P":0,"u":1515687267,"s":4,"b":0,"c":45.89,"h":50.78,"E":0,"R":[{"t":15.50,"T":5.0,"p":6,"d":5,"s":"C"},{"t":15.37,"T":5.0,"p":0,"d":0,"s":"C"},{"t":15.25,"T":5.0,"p":0,"d":0,"s":"C"},{"t":19.75,"T":19.0,"p":5,"d":4,"s":"C"},{"t":16.6,"T":5.0,"p":0,"d":0,"s":"C"}]}
 # P = pump status 0/1
 # u = unix time
 # s = current slot
@@ -72,7 +71,7 @@ CMD_UNBLOCK = 14
 #   s = status C/V/O/B (closed, opening, open, blocked)
 
 # Example response for programs calls /pr
-# {"T":[5.0,15.0,16.50,19.0],"r":2.0,"h":0.50,"t":490,"b":3600,"s":[3.74,4.3,7.20,8.6,10.22,12.0,13.20],"w":[[0,0,0],[1,1,1],[2,2,2],[3,3,3],[4,7,7],[4,4,7],[5,7,7],[5,5,7],[6,7,7],[6,6,7]],"d":[[255,0,0,0],[0,255,0,0],[0,0,255,0],[0,0,0,255],[48,129,0,78],[60,128,1,66],[60,128,1,66],[0,128,0,127]]}
+PR_RESULT = {"T":[5.0,15.0,16.50,19.0],"r":2.0,"h":0.50,"t":490,"b":3600,"s":[3.74,4.3,7.20,8.6,10.22,12.0,13.20],"w":[[0,0,0],[1,1,1],[2,2,2],[3,3,3],[4,7,7],[4,4,7],[5,7,7],[5,5,7],[6,7,7],[6,6,7]],"d":[[255,0,0,0],[0,255,0,0],[0,0,255,0],[0,0,0,255],[48,129,0,78],[60,128,1,66],[60,128,1,66],[0,128,0,127]]}
 # T = array of temperatures for T0-T3
 # r = raise temp delta
 # h = histeresys
@@ -89,6 +88,7 @@ CMD_UNBLOCK = 14
 # /?c=<command>&v=<value>&w=<other_value>
 # Commands: see commands above
 
+FAKE_ENDPOINT=True
 
 ROOM_STATUS = {
   'O': 'Riscaldamento in corso',
@@ -208,10 +208,6 @@ class RiscaldamentoApp(App):
     error_popup_content = None
 
     def start(self, arg):
-        self.check_status()
-        self.check_programs()
-        Clock.schedule_interval(self.check_status, 10)
-        Clock.schedule_interval(self.check_programs, 10)
         # Init buttons
 
         # Rooms
@@ -257,6 +253,10 @@ class RiscaldamentoApp(App):
             btn.bind(on_press=self.edit_time_slot)
             self.time_slots_buttons.append( btn )
 
+        self.check_status()
+        self.check_programs()
+        Clock.schedule_interval(self.check_status, 10)
+        Clock.schedule_interval(self.check_programs, 10)
 
     def error(self, message):
         if self.error_popup is None:
@@ -504,9 +504,13 @@ class RiscaldamentoApp(App):
 
 
     def check_status(self, *arg):
+        if FAKE_ENDPOINT:
+            return self.update_status(type('',(object,),{"error": False}), ST_RESULT)
         req = UrlRequest(cmd_url % 's', self.update_status)
 
     def check_programs(self, *arg):
+        if FAKE_ENDPOINT:
+            return self.update_programs(type('',(object,),{"error": False}), PR_RESULT)
         req = UrlRequest(cmd_url_path % 'pr', self.update_programs)
 
 
