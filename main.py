@@ -279,8 +279,8 @@ class RiscaldamentoApp(App):
         room_program_select = self.root.get_screen(
             'room_change_program_screen').room_program_select
         for i in range(len(WEEKLY_ROOM_PROGRAM_NAMES)):
-            btn = Button(text="%s: %s" % (
-                i+1, WEEKLY_ROOM_PROGRAM_NAMES[i]), font_size=30, markup=True, halign='left', padding_x=10, valign='middle')
+            btn = Button(text="PS%s: %s" % (
+                i, WEEKLY_ROOM_PROGRAM_NAMES[i]), font_size=30, markup=True, halign='left', padding_x=10, valign='middle')
             room_program_select.add_widget(btn)
             btn.index = i
             btn.bind(size=btn.setter('text_size'))
@@ -701,7 +701,7 @@ class RiscaldamentoApp(App):
         self.ws_call(CMD_TIME_SET, 4, datetime.now().month).wait()
         self.ws_call(CMD_TIME_SET, 5, datetime.now().day).wait()
 
-    def store_eeprom(self, arg):
+    def store_eeprom(self, *arg):
         """Store to EEPROM"""
 
         req = self.ws_call(CMD_WRITE_EEPROM)
