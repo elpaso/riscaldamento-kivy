@@ -36,11 +36,14 @@ version = 0.2
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = kivy
+# requirements = kivy==c0227c5
+#requirements = kivy==2.0.0rc3
+requirements = kivy==master
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
+
 
 # (list) Garden requirements
 #garden_requirements =

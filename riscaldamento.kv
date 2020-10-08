@@ -42,6 +42,10 @@ ScreenManager:
     RoomChangeProgramScreen:
     TimeSlotsScreen:
     TimeSlotSettingsScreen:
+    DailyProgramsScreen:
+    DailyProgramSettingsScreen:
+    DailyProgramChangeTemperatureScreen:
+    TemperatureSettingsScreen:
 
 <MenuScreen>:
     name: 'menu_screen'
@@ -125,7 +129,7 @@ ScreenManager:
             room_name: room_name
             room_program: room_program
             room_temps: room_temps
-            room_program: room_program
+
             MyBigLabel:
                 id: room_name
             MySmallLabel:
@@ -149,26 +153,41 @@ ScreenManager:
 <SettingsScreen>:
     name: 'settings_screen'
     BoxLayout:
-        #spacing: 10
+        spacing: 10
         orientation: "vertical"
+
         BoxLayout:
             #spacing: 10
             orientation: "vertical"
 
         MyBigButton:
-            text: 'Programmi settimanali'
+            text: 'PS: Programmi Settimanali'
             on_press:
                 app.root.current = 'weekly_programs_screen'
                 app.root.transition.direction = 'left'
 
-        Label:
-            id: spacer
+        MyBigButton:
+            text: 'PG: Programmi Giornalieri'
+            on_press:
+                app.root.current = 'daily_programs_screen'
+                app.root.transition.direction = 'left'
 
         MyBigButton:
             text: 'Fasce orarie'
             on_press:
                 app.root.current = 'time_slots_screen'
                 app.root.transition.direction = 'left'
+
+        MyBigButton:
+            text: 'Temperature'
+            on_press:
+                app.root.current = 'temperature_settings_screen'
+                app.root.transition.direction = 'left'
+
+        MyBigButton:
+            text: 'Salva in EEPROM'
+            on_press:
+                app.store_eeprom()
 
         Label:
             id: spacer
@@ -214,7 +233,6 @@ ScreenManager:
 
         BoxLayout:
             #spacing: 10
-
             orientation: "vertical"
             id: weekly_program_details_buttons
 
@@ -270,18 +288,22 @@ ScreenManager:
             font_size: 30
             halign: 'center'
 
-        Slider:
-            id: slider
-            min: 0
-            max: 14.4
-            step: 0.01
-            orientation: 'horizontal'
+        BoxLayout:
+            #spacing: 10
+            orientation: "vertical"
 
-        Label:
-            font_size: 30
-            text: str(app.represent_slot(slider.value))
+            Slider:
+                id: slider
+                min: 0
+                max: 14.4
+                step: 0.01
+                orientation: 'horizontal'
 
-        MyBigBackButton:
+            Label:
+                font_size: 30
+                text: str(app.represent_slot(slider.value))
+
+        MyBigButton:
             text: 'Salva'
             on_press:
                 app.change_slot_value()
@@ -292,4 +314,162 @@ ScreenManager:
             text: 'Fasce orarie'
             on_press:
                 app.root.current = 'time_slots_screen'
+                app.root.transition.direction = 'right'
+
+<DailyProgramsScreen>
+    name: 'daily_programs_screen'
+    daily_programs_buttons: daily_programs_buttons
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            text: "Programmi giornalieri"
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            #spacing: 10
+
+            orientation: "vertical"
+            id: daily_programs_buttons
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'settings_screen'
+                app.root.transition.direction = 'right'
+
+
+<DailyProgramSettingsScreen>
+    name: 'daily_program_settings_screen'
+    on_enter: app.update_daily_program_settings_screen()
+    daily_program_settings_label: daily_program_settings_label
+    daily_program_settings_buttons: daily_program_settings_buttons
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            id: daily_program_settings_label
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            spacing: 10
+            id: daily_program_settings_buttons
+            orientation: "vertical"
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'daily_programs_screen'
+                app.root.transition.direction = 'right'
+
+
+<DailyProgramChangeTemperatureScreen>
+    name: 'daily_program_change_temperature_screen'
+    on_enter: app.update_daily_program_change_temperature_screen()
+    daily_program_change_temperature_label: daily_program_change_temperature_label
+    daily_program_change_temperature_buttons: daily_program_change_temperature_buttons
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            id: daily_program_change_temperature_label
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            spacing: 10
+            id: daily_program_change_temperature_buttons
+            orientation: "vertical"
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'daily_program_settings_screen'
+                app.root.transition.direction = 'right'
+
+<TemperatureSettingsScreen>
+    name: 'temperature_settings_screen'
+    on_enter: app.update_temperatures_screen()
+    slider_t1: slider_t1
+    slider_t2: slider_t2
+    slider_t3: slider_t3
+
+    BoxLayout:
+        #spacing: 10
+        orientation: "vertical"
+
+        MyBigLabel:
+            text: "Impostazione temperature"
+            text_size: self.width, None
+            height: self.texture_size[1]
+            font_size: 30
+            halign: 'center'
+
+        BoxLayout:
+            spacing: 10
+            id: daily_program_change_temperature_buttons
+            orientation: "vertical"
+
+            Label:
+                font_size: 30
+                text: str("T1 %.1f °C" % slider_t1.value)
+
+            Slider:
+                id: slider_t1
+                min: 10
+                max: 25
+                step: 0.1
+                orientation: 'horizontal'
+
+            Label:
+                font_size: 30
+                text: str("T2 %.1f °C" % slider_t2.value)
+
+            Slider:
+                id: slider_t2
+                min: 10
+                max: 25
+                step: 0.1
+                orientation: 'horizontal'
+
+            Label:
+                font_size: 30
+                text: str("T3 %.1f °C" % slider_t3.value)
+
+            Slider:
+                id: slider_t3
+                min: 10
+                max: 25
+                step: 0.1
+                orientation: 'horizontal'
+
+            Label:
+                id: spacer
+
+        MyBigButton:
+            text: 'Salva'
+            on_press:
+                app.change_temperatures()
+                app.root.current = 'settings_screen'
+                app.root.transition.direction = 'right'
+
+
+        MyBigBackButton:
+            text: 'Impostazioni'
+            on_press:
+                app.root.current = 'settings_screen'
                 app.root.transition.direction = 'right'
